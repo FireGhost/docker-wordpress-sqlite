@@ -25,7 +25,6 @@ jobs:
           echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
           echo "wordpress_version=${wordpress_version}" >> "$GITHUB_OUTPUT"
           echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
-      - run: echo "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
       -
         name: "Push changes to branch main"
         uses: stefanzweifel/git-auto-commit-action@v5
