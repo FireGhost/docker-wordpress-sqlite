@@ -19,7 +19,8 @@ jobs:
         run: |
           wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq .[0].name`
           sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq .[0].name`
-          echo "{\"wordpress_version\":${wordpress_version},\"sqlite_database_integration_version\":\"${sqlite_database_integration_version:2}}" > versions.json
+          sqlite_database_integration_version="\"${sqlite_database_integration_version:2}"
+          echo "{\"wordpress_version\":${wordpress_version},\"sqlite_database_integration_version\":${sqlite_database_integration_version}}" > versions.json
           git diff
           if [[ ! `git status --porcelain` ]]; then
             echo "No changes. No push"
