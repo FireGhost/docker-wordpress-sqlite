@@ -7,9 +7,16 @@ jobs:
   build-push:
     runs-on: ubuntu-latest
     steps:
+      - 
+        name: "Checkout v4"
+        uses: actions/checkout@v4
       -
-        name: Get Wordpress version
-        run: curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq .[0].name
+        name: "Update versions.json"
+        run: |
+          wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq .[0].name`
+          sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq .[0].name`
+          echo "{wordpress_version=${wordpress_version},sqlite_database_integration_version=${sqlite_database_integration_version}}" > versions.json
+          git diff
         
       #- uses: actions/checkout@v4
       #- run: |
