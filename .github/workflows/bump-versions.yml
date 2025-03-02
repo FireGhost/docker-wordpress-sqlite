@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-push:
+  bump-versions:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -24,6 +24,8 @@ jobs:
           echo "{\"wordpress_version\":${wordpress_version},\"sqlite_database_integration_version\":${sqlite_database_integration_version}}" > versions.json
           git diff
           echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
+          echo "wordpress_version=${wordpress_version}" >> "$GITHUB_OUTPUT"
+          echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
       -
         name: "Push changes to branch main"
         uses: stefanzweifel/git-auto-commit-action@v5
@@ -31,3 +33,4 @@ jobs:
         with:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
+          tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
