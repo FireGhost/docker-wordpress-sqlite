@@ -9,7 +9,7 @@ jobs:
     steps:
       -
         name: Get Wordpress version
-        run: echo "amazing !"
+        run: curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq.[0].name
         
       #- uses: actions/checkout@v4
       #- run: |
