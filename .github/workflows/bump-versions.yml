@@ -23,13 +23,11 @@ jobs:
           sqlite_database_integration_version="\"${sqlite_database_integration_version:2}"
           echo "{\"wordpress_version\":${wordpress_version},\"sqlite_database_integration_version\":${sqlite_database_integration_version}}" > versions.json
           git diff
-          echo "has_update=`git status --porcelain`"
           echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
-          exit 1
       -
         name: "Push changes to branch main"
         uses: stefanzweifel/git-auto-commit-action@v5
-        if:  ${{ steps.update_versions_file.outputs.has_update }}
+        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
         with:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
