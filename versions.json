@@ -1,4 +1,1 @@
-{
-  "wordpress": "6.7.2",
-  "sqlite-database-integration": "2.1.16",
-}
+{"wordpress_version":"6.7.2","sqlite_database_integration_version":"v2.1.16"}
