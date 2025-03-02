@@ -6,6 +6,8 @@ on:
 jobs:
   build-push:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - 
         name: "Checkout v4"
@@ -17,12 +19,10 @@ jobs:
           sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq .[0].name`
           echo "{\"wordpress_version\":${wordpress_version},\"sqlite_database_integration_version\":\"${sqlite_database_integration_version:2}}" > versions.json
           git diff
-          if [[ `git status --porcelain` ]]; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add versions.json
-            git commit -m "Auto versions bump"
-            git push
-          else
+          if [[ ! `git status --porcelain` ]]; then
             echo "No changes. No push"
+            exit 1
           fi
+      -
+        name: "Push changes to branch main"
+        uses: stefanzweifel/git-auto-commit-action@v5
