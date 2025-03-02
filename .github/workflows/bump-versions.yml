@@ -26,3 +26,6 @@ jobs:
       -
         name: "Push changes to branch main"
         uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "Auto bump versions"
+          file_pattern: 'versions.json'
