@@ -12,8 +12,8 @@ RUN curl -o sqlite-database-integration.zip -fL "https://downloads.wordpress.org
 	unzip sqlite-database-integration.zip -d /usr/src/wordpress/wp-content/plugins/; \
 	rm sqlite-database-integration.zip; \
 	cp /usr/src/wordpress/wp-content/plugins/sqlite-database-integration/db.copy /usr/src/wordpress/wp-content/db.php; \
-	sed -ie 's;{SQLITE_IMPLEMENTATION_FOLDER_PATH};/var/www/html/wp-content/plugins/sqlite-database-integration;g' /usr/src/wordpress/wp-content/db.php; \
-	sed -ie 's;{SQLITE_PLUGIN};sqlite-database-integration/load.php;g' /usr/src/wordpress/wp-content/db.php; \
+	sed -i -e 's;{SQLITE_IMPLEMENTATION_FOLDER_PATH};/var/www/html/wp-content/plugins/sqlite-database-integration;g' /usr/src/wordpress/wp-content/db.php; \
+	sed -i -e 's;{SQLITE_PLUGIN};sqlite-database-integration/load.php;g' /usr/src/wordpress/wp-content/db.php; \
 	chown -R www-data:www-data /usr/src/wordpress/wp-content; \
 	chmod -R 1777 /usr/src/wordpress/wp-content;
 
