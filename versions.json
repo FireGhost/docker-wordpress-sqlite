@@ -1,4 +1,4 @@
 {
-  "wordpress": 6.7.2,
-  "sqlite-database-integration": 2.1.16,
+  "wordpress": "6.7.2",
+  "sqlite-database-integration": "2.1.16",
 }
