@@ -7,7 +7,6 @@ on:
     paths:
       - 'versions.json'
   workflow_dispatch:
-  workflow_call:
 
 jobs:
   set-matrix:
