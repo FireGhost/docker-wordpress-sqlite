@@ -20,10 +20,15 @@ jobs:
         id: creating_matrix
         run: |
           wordpress_version=$(cat versions.json | jq -r .wordpress_version)
-          echo -n "wordpress_versions_matrix=[" >> "$GITHUB_OUTPUT"
-          prev_v=""; for v in ${wordpress_version//./ }; do echo -n "\"${prev_v}${v}\"," >> "$GITHUB_OUTPUT"; prev_v="${prev_v}${v}."; done;
-          echo -n "]" >> "$GITHUB_OUTPUT"
-          echo -e "\nplugin_versions_matrix=[\"$(cat versions.json | jq -r .sqlite_database_integration_version)\"]" >> "$GITHUB_OUTPUT"
+          wordpress_versions_matrix="";
+          prev_v=""
+          for v in ${wordpress_version//./ }
+          do
+            wordpress_versions_matrix="${wordpress_versions_matrix},\"${prev_v}${v}\""
+            prev_v="${prev_v}${v}."
+          done
+          echo "wordpress_versions_matrix=[${wordpress_versions_matrix:1}]" >> "$GITHUB_OUTPUT"
+          echo "plugin_versions_matrix=[\"$(cat versions.json | jq -r .sqlite_database_integration_version)\"]" >> "$GITHUB_OUTPUT"
 
   build-and-push:
     needs: set-matrix
@@ -39,7 +44,7 @@ jobs:
         run: |
           plugin_version=${{ matrix.sqlite_database_integration_version }}
           wordpress_version=${{ matrix.wordpress_version }}
-          tags_list=""
+          tags_list="fireghost/wordpress-sqlite:${wordpress_version}"
           prev_v=""
           for v in ${plugin_version//./ }
           do
@@ -48,7 +53,7 @@ jobs:
           done
           only_dots=${wordpress_version//[^\.]}
           if [[ ${#only_dots} == 2 ]]; then tags_list="${tags_list},fireghost/wordpress-sqlite:latest"; fi;
-          echo "tags_list=${tags_list:1}" >> "$GITHUB_OUTPUT"
+          echo "tags_list=${tags_list}" >> "$GITHUB_OUTPUT"
       -
         name: Echo vars
         run: |
