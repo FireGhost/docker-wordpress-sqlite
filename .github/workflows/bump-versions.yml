@@ -13,6 +13,8 @@ jobs:
     steps:
       - name: "Checkout v4"
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.FIREGHOST_PAT }}
 
       - name: "Update versions.json"
         id: update_versions_file
@@ -32,7 +34,3 @@ jobs:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
           tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
-
-      - uses: FireGhost/docker-wordpress-sqlite/.github/workflows/build-push.yml@main
-        name: "Run build-push workflow"
-        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
