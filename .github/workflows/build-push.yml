@@ -6,24 +6,80 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-push:
+  set-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      wordpress_versions_matrix: ${{ steps.creating_matrix.outputs.wordpress_versions_matrix }}
+      plugin_versions_matrix: ${{ steps.creating_matrix.outputs.plugin_versions_matrix }}
     steps:
       -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+        name: Creating matrix
+        id: creating_matrix
+        run: |
+          wordpress_version=$(cat versions.json | jq .wordpress_version)
+          echo -n "wordpress_versions_matrix=" >> "$GITHUB_OUTPUT"
+          prev_v=""; for v in ${wordpress_version//./ }; do echo -n "${prev_v}${v} "; prev_v="${prev_v}${v}."; done; >> "$GITHUB_OUTPUT"
+          echo -e "\nplugin_versions_matrix=$(cat versions.json | jq .sqlite_database_integration_version)" >> "$GITHUB_OUTPUT"
+
+  build-and-push:
+    needs: set-matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        wordpress_version: ${{ needs.set-matrix.outputs.wordpress_versions_matrix }}
+        sqlite_database_integration_version: ${{ needs.set-matrix.outputs.plugin_versions_matrix }}
+    steps:
       -
-        name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        name: Build tags list
+        id: build_tags_list
+        run: |
+          plugin_version=${{ matrix.sqlite_database_integration_version }}
+          wordpress_version=${{ matrix.wordpress_version }}
+          echo -n "tags_list=" >> "$GITHUB_OUTPUT"
+          prev_v=""
+          i=0
+          for v in ${plugin_version//./ }
+          do
+            echo -n "fireghost/wordpress-sqlite:${wordpress_version}-${prev_v}${v}," >> "$GITHUB_OUTPUT"
+            prev_v="${prev_v}${v}."
+            if [[ $i == 2 ]]
+              then echo -n "fireghost/wordpress-sqlite:latest," >> "$GITHUB_OUTPUT"
+            fi
+            i=$(expr $i + 1)
+          done
       -
-        name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Build and push
-        uses: docker/build-push-action@v6
-        with:
-          push: true
-          tags: fireghost/wordpress-sqlite:latest
+        name: Echo vars
+        run: |
+          echo "plugin version: ${{ matrix.sqlite_database_integration_version }}"
+          echo "wordpress version: ${{ matrix.wordpress_version }}"
+          echo "tags list: ${{ steps.build_tags_list.outputs.tags_list }}"
+#      -
+#        name: Login to Docker Hub
+#        uses: docker/login-action@v3
+#        with:
+#          username: ${{ vars.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      -
+#        name: Set up QEMU
+#        uses: docker/setup-qemu-action@v3
+#      -
+#        name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v3
+#      -
+#        name: Build and push
+#        uses: docker/build-push-action@v6
+#        with:
+#          push: true
+#          platforms:
+#            - linux/386
+#            - linux/amd64
+#            - linux/arm/v5
+#            - linux/arm/v7
+#            - linux/arm64/v8
+#            - linux/mips64le
+#            - linux/ppc64le
+#            - linux/s390x
+#          build-args:
+#            - FROM_IMAGE_VERSION=${{ matrix.wordpress_version }}
+#            - SQLITE_DB_INTEGRATION_VERSION=${{ matrix.sqlite_database_integration_version }}
+#          tags: ${{ steps.build_tags_list.outputs.tags_list }}
