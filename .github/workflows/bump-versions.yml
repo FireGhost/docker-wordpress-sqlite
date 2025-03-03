@@ -36,3 +36,4 @@ jobs:
       -
         name: "Run build-push workflow"
         uses: ./.github/workflows/build-push.yml
+        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
