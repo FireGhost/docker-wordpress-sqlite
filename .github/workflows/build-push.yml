@@ -1,13 +1,15 @@
 name: "build & push"
 
 on:
-  #push:
-  #  branches: main
+  push:
+    branches: main
+    paths: 'versions.json'
   workflow_dispatch:
 
 jobs:
   set-matrix:
     runs-on: ubuntu-latest
+    if: contains(github.event.head_commit.message, 'Auto bump versions')
     outputs:
       wordpress_versions_matrix: ${{ steps.creating_matrix.outputs.wordpress_versions_matrix }}
       plugin_versions_matrix: ${{ steps.creating_matrix.outputs.plugin_versions_matrix }}
