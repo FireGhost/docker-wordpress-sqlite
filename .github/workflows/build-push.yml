@@ -39,18 +39,16 @@ jobs:
         run: |
           plugin_version=${{ matrix.sqlite_database_integration_version }}
           wordpress_version=${{ matrix.wordpress_version }}
-          echo -n "tags_list=" >> "$GITHUB_OUTPUT"
+          tags_list=""
           prev_v=""
-          i=0
           for v in ${plugin_version//./ }
           do
-            echo -n "fireghost/wordpress-sqlite:${wordpress_version}-${prev_v}${v}," >> "$GITHUB_OUTPUT"
+            tags_list="${tags_list},fireghost/wordpress-sqlite:${wordpress_version}-${prev_v}${v}"
             prev_v="${prev_v}${v}."
-            if [[ $i == 2 ]]
-              then echo -n "fireghost/wordpress-sqlite:latest," >> "$GITHUB_OUTPUT"
-            fi
-            i=$(expr $i + 1)
           done
+          only_dots=${wordpress_version//[^\.]}
+          if [[ ${#only_dots} == 2 ]]; then tags_list="${tags_list},fireghost/wordpress-sqlite:latest"; fi;
+          echo "tags_list=${tags_list:1}" >> "$GITHUB_OUTPUT"
       -
         name: Echo vars
         run: |
