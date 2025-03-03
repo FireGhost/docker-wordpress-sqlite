@@ -21,9 +21,9 @@ jobs:
         run: |
           wordpress_version=$(cat versions.json | jq -r .wordpress_version)
           echo -n "wordpress_versions_matrix=[" >> "$GITHUB_OUTPUT"
-          prev_v=""; for v in ${wordpress_version//./ }; do echo -n "${prev_v}${v}," >> "$GITHUB_OUTPUT"; prev_v="${prev_v}${v}."; done;
+          prev_v=""; for v in ${wordpress_version//./ }; do echo -n "\"${prev_v}${v}\"," >> "$GITHUB_OUTPUT"; prev_v="${prev_v}${v}."; done;
           echo -n "]" >> "$GITHUB_OUTPUT"
-          echo -e "\nplugin_versions_matrix=[$(cat versions.json | jq -r .sqlite_database_integration_version)]" >> "$GITHUB_OUTPUT"
+          echo -e "\nplugin_versions_matrix=[\"$(cat versions.json | jq -r .sqlite_database_integration_version)\"]" >> "$GITHUB_OUTPUT"
 
   build-and-push:
     needs: set-matrix
