@@ -11,11 +11,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      -
-        name: "Checkout v4"
+      - name: "Checkout v4"
         uses: actions/checkout@v4
-      -
-        name: "Update versions.json"
+
+      - name: "Update versions.json"
         id: update_versions_file
         run: |
           wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq -r .[0].name`
@@ -25,15 +24,15 @@ jobs:
           echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
           echo "wordpress_version=${wordpress_version}" >> "$GITHUB_OUTPUT"
           echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
-      -
-        name: "Push changes to branch main"
-        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
+
+      - name: "Push changes to branch main"
         uses: stefanzweifel/git-auto-commit-action@v5
+        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
         with:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
           tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
-      -
-        name: "Run build-push workflow"
-        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
+
+      - name: "Run build-push workflow"
         uses: FireGhost/docker-wordpress-sqlite/.github/workflows/build-push.yml@main
+        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
