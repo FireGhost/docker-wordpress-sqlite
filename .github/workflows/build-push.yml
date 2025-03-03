@@ -2,8 +2,10 @@ name: "build & push"
 
 on:
   push:
-    branches: main
-    paths: 'versions.json'
+    branches:
+      - 'main'
+    paths:
+      - 'versions.json'
   workflow_dispatch:
 
 jobs:
