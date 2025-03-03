@@ -11,15 +11,15 @@ jobs:
     permissions:
       contents: write
     steps:
-      - 
+      -
         name: "Checkout v4"
         uses: actions/checkout@v4
       -
         name: "Update versions.json"
         id: update_versions_file
         run: |
-          wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq .[0].name | tail -c +2 | head -c -2`
-          sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq .[0].name | tail -c +3 | head -c -2`
+          wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq -r .[0].name`
+          sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq -r .[0].name | tail -c +2`
           echo "{\"wordpress_version\":\"${wordpress_version}\",\"sqlite_database_integration_version\":\"${sqlite_database_integration_version}\"}" > versions.json
           git diff
           echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
