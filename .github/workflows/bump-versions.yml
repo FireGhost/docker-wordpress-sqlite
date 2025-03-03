@@ -27,13 +27,13 @@ jobs:
           echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
       -
         name: "Push changes to branch main"
-        uses: stefanzweifel/git-auto-commit-action@v5
         if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
+        uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
           tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
       -
         name: "Run build-push workflow"
-        uses: ./.github/workflows/build-push.yml
         if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
+        uses: FireGhost/docker-wordpress-sqlite/.github/workflows/build-push.yml@main
