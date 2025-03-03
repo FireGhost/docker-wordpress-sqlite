@@ -33,3 +33,6 @@ jobs:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
           tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
+      -
+        name: "Run build-push workflow"
+        uses: ./.github/workflows/build-push.yml
