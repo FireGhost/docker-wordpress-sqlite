@@ -33,6 +33,6 @@ jobs:
           file_pattern: 'versions.json'
           tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
 
-      - name: "Run build-push workflow"
-        uses: FireGhost/docker-wordpress-sqlite/.github/workflows/build-push.yml@main
+      - uses: FireGhost/docker-wordpress-sqlite/.github/workflows/build-push.yml@main
+        name: "Run build-push workflow"
         if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
