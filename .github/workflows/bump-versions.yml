@@ -25,7 +25,7 @@ jobs:
           git diff
           if [[ $sqlite_database_integration_version == *"-"* ]]; then
             echo "The latest tag of Sqlite Database Integration is not a final release"
-            echo "has_update=''" >> "$GITHUB_OUTPUT"
+            echo "has_update=" >> "$GITHUB_OUTPUT"
           else
             echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
           fi
