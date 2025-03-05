@@ -23,7 +23,12 @@ jobs:
           sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq -r .[0].name | tail -c +2`
           echo "{\"wordpress_version\":\"${wordpress_version}\",\"sqlite_database_integration_version\":\"${sqlite_database_integration_version}\"}" > versions.json
           git diff
-          echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
+          if [[ $sqlite_database_integration_version == *"-"* ]]; then
+            echo "The latest tag of Sqlite Database Integration is not a final release"
+            echo "has_update=''" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
+          fi
           echo "wordpress_version=${wordpress_version}" >> "$GITHUB_OUTPUT"
           echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
 
