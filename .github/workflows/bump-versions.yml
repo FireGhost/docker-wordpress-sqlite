@@ -16,26 +16,36 @@ jobs:
         with:
           token: ${{ secrets.FIREGHOST_PAT }}
 
-      - name: "Update versions.json"
-        id: update_versions_file
+      - name: "Update Wordpress version"
+        id: update_wordpress_version
         run: |
           wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq -r .[0].name`
-          sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq -r .[0].name | tail -c +2`
-          echo "{\"wordpress_version\":\"${wordpress_version}\",\"sqlite_database_integration_version\":\"${sqlite_database_integration_version}\"}" > versions.json
-          git diff
-          if [[ $sqlite_database_integration_version == *"-"* ]]; then
-            echo "The latest tag of Sqlite Database Integration is not a final release"
-            echo "has_update=" >> "$GITHUB_OUTPUT"
+          if [[ $wordpress_version == *"-"* ]]; then
+            echo "The latest tag of Wordpress is not a final release: ${wordpress_version}"
+            echo "has_wordpress_update=" >> "$GITHUB_OUTPUT"
           else
-            echo "has_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
+            echo $(jq -c --arg wordpress_version "${wordpress_version}" '.wordpress_version = $wordpress_version' versions.json) > versions.json
+            echo "has_wordpress_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
+            echo "wordpress_version=${wordpress_version}" >> "$GITHUB_OUTPUT"
           fi
-          echo "wordpress_version=${wordpress_version}" >> "$GITHUB_OUTPUT"
-          echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
+
+      - name: "Update Sqlite plugin version"
+        id: update_sqlite_plugin_version
+        run: |
+          sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq -r .[0].name | tail -c +2`
+          if [[ $sqlite_database_integration_version == *"-"* ]]; then
+            echo "The latest tag of the Sqlite plugin integration is not a final release: ${sqlite_database_integration_version}"
+            echo "has_sqlite_plugin_update=" >> "$GITHUB_OUTPUT"
+          else
+            echo $(jq -c --arg sqlite_database_integration_version "${sqlite_database_integration_version}" '.sqlite_database_integration_version = $sqlite_database_integration_version' versions.json) > versions.json
+            echo "has_sqlite_plugin_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
+            echo "sqlite_database_integration_version=${sqlite_database_integration_version}" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: "Push changes to branch main"
         uses: stefanzweifel/git-auto-commit-action@v5
-        if:  ${{ steps.update_versions_file.outputs.has_update != '' }}
+        if:  ${{ steps.update_wordpress_version.outputs.has_wordpress_update != '' || steps.update_sqlite_plugin_version.outputs.has_sqlite_plugin_update != '' }}
         with:
           commit_message: "Auto bump versions"
           file_pattern: 'versions.json'
-          tagging_message: "${{ steps.update_versions_file.outputs.wordpress_version }}-${{ steps.update_versions_file.outputs.sqlite_database_integration_version }}"
+          tagging_message: "${{ steps.update_wordpress_version.outputs.wordpress_version }}-${{ steps.update_sqlite_plugin_version.outputs.sqlite_database_integration_version }}"
