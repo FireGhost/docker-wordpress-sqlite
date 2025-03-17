@@ -22,6 +22,7 @@ jobs:
           wordpress_version=`curl "https://api.github.com/repos/WordPress/WordPress/tags?per_page=1" | jq -r .[0].name`
           if [[ $wordpress_version == *"-"* ]]; then
             echo "The latest tag of Wordpress is not a final release: ${wordpress_version}"
+            echo "wordpress_version=$(jq .wordpress_version versions.json)" >> "$GITHUB_OUTPUT"
             echo "has_wordpress_update=" >> "$GITHUB_OUTPUT"
           else
             echo $(jq -c --arg wordpress_version "${wordpress_version}" '.wordpress_version = $wordpress_version' versions.json) > versions.json
@@ -35,6 +36,7 @@ jobs:
           sqlite_database_integration_version=`curl "https://api.github.com/repos/WordPress/sqlite-database-integration/tags?per_page=1" | jq -r .[0].name | tail -c +2`
           if [[ $sqlite_database_integration_version == *"-"* ]]; then
             echo "The latest tag of the Sqlite plugin integration is not a final release: ${sqlite_database_integration_version}"
+            echo "sqlite_database_integration_version=$(jq .sqlite_database_integration_version versions.json)" >> "$GITHUB_OUTPUT"
             echo "has_sqlite_plugin_update=" >> "$GITHUB_OUTPUT"
           else
             echo $(jq -c --arg sqlite_database_integration_version "${sqlite_database_integration_version}" '.sqlite_database_integration_version = $sqlite_database_integration_version' versions.json) > versions.json
