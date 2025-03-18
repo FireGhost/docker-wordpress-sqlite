@@ -22,7 +22,6 @@ jobs:
           if [[ $wordpress_version == *"-"* ]]; then
             echo "The latest tag of Wordpress is not a final release: ${wordpress_version}"
           else
-            echo "Wordpress will be updated to: ${wordpress_version}"
             echo $(jq -c --arg wordpress_version "${wordpress_version}" '.wordpress_version = $wordpress_version' versions.json) > versions.json
           fi
 
@@ -32,7 +31,6 @@ jobs:
           if [[ $sqlite_database_integration_version == *"-"* ]]; then
             echo "The latest tag of the Sqlite plugin integration is not a final release: ${sqlite_database_integration_version}"
           else
-            echo "The Sqlite integration will be updated to: ${sqlite_database_integration_version}"
             echo $(jq -c --arg sqlite_database_integration_version "${sqlite_database_integration_version}" '.sqlite_database_integration_version = $sqlite_database_integration_version' versions.json) > versions.json
           fi
 
@@ -41,6 +39,7 @@ jobs:
         run: |
           echo "sqlite_database_integration_version=$(jq -r .sqlite_database_integration_version versions.json)" >> "$GITHUB_OUTPUT"
           echo "wordpress_version=$(jq -r .wordpress_version versions.json)" >> "$GITHUB_OUTPUT"
+          git status --porcelain
           echo "needs_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
 
       - name: "Push changes to branch main"
