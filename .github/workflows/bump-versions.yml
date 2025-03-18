@@ -39,7 +39,7 @@ jobs:
         run: |
           echo "sqlite_database_integration_version=$(jq -r .sqlite_database_integration_version versions.json)" >> "$GITHUB_OUTPUT"
           echo "wordpress_version=$(jq -r .wordpress_version versions.json)" >> "$GITHUB_OUTPUT"
-          echo "$(git status --porcelain)"
+          echo "Diff: $(git diff)"
           echo "needs_update=`git status --porcelain`" >> "$GITHUB_OUTPUT"
 
       - name: "Push changes to branch main"
