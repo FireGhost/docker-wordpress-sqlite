@@ -7,6 +7,7 @@ RUN set -ex; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
       unzip \
+      patch \
     ; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*;
@@ -21,5 +22,7 @@ RUN set -ex; \
     chown -R www-data:www-data /usr/src/wordpress/wp-content; \
     chmod -R 1777 /usr/src/wordpress/wp-content;
 
-COPY --chown=www-data:www-data wp-config-docker.php /usr/src/wordpress/
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY patches/* /usr/src/patches/
+RUN set -ex; \
+    patch --ignore-whitespace --binary /usr/local/bin/docker-entrypoint.sh /usr/src/patches/docker-entrypoint.sh.patch; \
+    patch --ignore-whitespace --binary /usr/src/wordpress/wp-config-docker.php /usr/src/patches/wp-config-docker.php.patch;
