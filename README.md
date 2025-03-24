@@ -24,11 +24,6 @@ Additionally, this image adds these environment variables that define the locati
 - `WORDPRESS_DB_DIR=/var/www/html/wp-content/database/`
 - `WORDPRESS_DB_FILE=wordpress.sqlite`
 
-For example, you can use them like this:
-```
-docker run -d -v my-wordpress-database:/database -e WORDPRESS_DB_DIR=/database fireghost/wordpress-sqlite
-```
-
 ## Versions
 The version combines the version of WordPress and the version of the SQLite Database Integration plugin.
 For example, the version *6.7.1-2.1.16* means that it is using the WordPress version "6.7.1" and the SQLite plugin version "2.1.16".
