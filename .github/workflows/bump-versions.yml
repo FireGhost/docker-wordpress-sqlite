@@ -22,6 +22,14 @@ jobs:
           if [[ $wordpress_version == *"-"* ]]; then
             echo "The latest tag of Wordpress is not a final release: ${wordpress_version}"
           else
+            # Add multiple ".0" if the version has less than three digits.
+            wordpress_version_dots=${wordpress_version//[^\.]}
+            nbr_dots=${#wordpress_version_dots}
+            nbr_dots_to_add=$((2 - ${nbr_dots}))
+            for ((i = 0 ; i < $nbr_dots_to_add ; i++)); do
+              wordpress_version=${wordpress_version}.0
+            done
+
             echo $(jq -c --arg wordpress_version "${wordpress_version}" '.wordpress_version = $wordpress_version' versions.json) > versions.json
           fi
 
