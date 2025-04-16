@@ -29,6 +29,6 @@ The version combines the version of WordPress and the version of the SQLite Data
 For example, the version *6.7.1-2.1.16* means that it is using the WordPress version "6.7.1" and the SQLite plugin version "2.1.16".
 Here are more examples:
 - *latest* = latest version of WordPress and latest version of SQLite plugin.
-- *6* = WordPress version "6" and the latest SQLite plugin version.
+- *6* = WordPress version "6.x.x" and the latest SQLite plugin version.
 - *6.7-2* = WordPress version "6.7.x" and SQLite plugin version "2.x.x".
 - *6.7.1-2.1.16* = WordPress version "6.7.1" and SQLite plugin version "2.1.16".
