@@ -17,6 +17,9 @@ Or, for a more useful example:
 docker run -d --name wordpress-sqlite -v wordpress-sqlite:/var/www/html -p 80:80 fireghost/wordpress-sqlite:6
 ```
 
+Read the offical [Wordpress Docker image documentation](https://hub.docker.com/_/wordpress) for more information on how to use this image.
+Just ommit the part about the MySQL server since it is not needed with this image.
+
 ## Environment variables
 You can use all the environment variables set by [the official WordPress image.](https://hub.docker.com/_/wordpress)
 
